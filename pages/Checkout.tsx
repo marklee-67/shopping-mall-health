@@ -41,7 +41,7 @@ export const Checkout: React.FC = () => {
               </div>
               <div className="flex items-center gap-4 p-4">
                 <div className="h-16 w-16 shrink-0 rounded-lg bg-gray-100 dark:bg-gray-800 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1550572017-edbb955e0be6?auto=format&fit=crop&q=80&w=200" className="w-full h-full object-cover" alt="item" />
+                    <img src="https://images.unsplash.com/photo-1620916297397-a4a5402a3c6c?auto=format&fit=crop&q=80&w=200" className="w-full h-full object-cover" alt="item" />
                 </div>
                 <div className="flex flex-1 flex-col justify-center">
                   <p className="font-medium text-text-light-primary dark:text-text-dark-primary line-clamp-1">알티지 오메가3 플러스</p>

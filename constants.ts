@@ -1,5 +1,10 @@
 import { Category, Product } from './types';
 
+export const ADMIN_CREDENTIALS = {
+  id: 'admin',
+  password: '1212',
+};
+
 export const PRODUCTS: Product[] = [
   {
     id: '1',
@@ -18,7 +23,7 @@ export const PRODUCTS: Product[] = [
     price: 42000,
     rating: 4.6,
     reviewCount: 890,
-    image: 'https://images.unsplash.com/photo-1550572017-edbb955e0be6?auto=format&fit=crop&q=80&w=400',
+    image: 'https://images.unsplash.com/photo-1620916297397-a4a5402a3c6c?auto=format&fit=crop&q=80&w=400',
     category: Category.VASCULAR,
   },
   {
@@ -40,7 +45,7 @@ export const PRODUCTS: Product[] = [
     price: 35000,
     rating: 4.7,
     reviewCount: 2100,
-    image: 'https://images.unsplash.com/photo-1626425945347-159679da391b?auto=format&fit=crop&q=80&w=400',
+    image: 'https://images.unsplash.com/photo-1616671276445-162152671d8f?auto=format&fit=crop&q=80&w=400',
     category: Category.EYE,
   },
   {

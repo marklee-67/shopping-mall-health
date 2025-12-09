@@ -8,7 +8,7 @@ export const Cart: React.FC = () => {
   const cartItems = [PRODUCTS[6], PRODUCTS[7], PRODUCTS[8]]; // Mock cart items
 
   return (
-    <div className="flex flex-col min-h-screen bg-background-light dark:bg-background-dark pb-40">
+    <div className="flex flex-col min-h-screen bg-background-light dark:bg-background-dark pb-80">
       <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b border-border-light dark:border-border-dark bg-white dark:bg-background-dark px-4">
         <button onClick={() => navigate(-1)} className="flex h-10 w-10 items-center justify-center -ml-2 text-text-light-primary dark:text-text-dark-primary">
           <ArrowLeft size={24} />
@@ -78,7 +78,7 @@ export const Cart: React.FC = () => {
         </div>
       </main>
 
-      <footer className="fixed bottom-20 left-0 right-0 z-10 border-t border-border-light dark:border-border-dark bg-white dark:bg-background-dark p-4 shadow-top">
+      <footer className="fixed bottom-[84px] left-0 right-0 z-10 border-t border-border-light dark:border-border-dark bg-white dark:bg-background-dark p-4 shadow-top">
         <div className="space-y-2 mb-4">
           <div className="flex justify-between text-base text-text-light-secondary dark:text-text-dark-secondary">
             <span>상품 금액</span>

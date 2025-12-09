@@ -12,7 +12,7 @@ export const ProductDetail: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-white dark:bg-background-dark pb-24">
       {/* Header */}
       <header className="sticky top-0 z-20 flex h-14 items-center justify-between bg-white/90 dark:bg-background-dark/90 px-4 backdrop-blur-md">
-        <button onClick={() => navigate(-1)} className="flex h-10 w-10 items-center justify-center -ml-2 text-text-light-primary dark:text-text-dark-primary">
+        <button onClick={() => navigate('/list')} className="flex h-10 w-10 items-center justify-center -ml-2 text-text-light-primary dark:text-text-dark-primary">
           <ArrowLeft size={24} />
         </button>
         <h1 className="text-lg font-bold text-text-light-primary dark:text-text-dark-primary">상품 상세</h1>

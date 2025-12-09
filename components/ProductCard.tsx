@@ -17,23 +17,27 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, variant = 'gr
 
   if (variant === 'row') {
     return (
-      <div onClick={handleClick} className="flex gap-4 cursor-pointer bg-white dark:bg-background-dark/50 rounded-xl p-2 animate-fade-in">
-        <div className="relative w-24 h-24 shrink-0 rounded-lg overflow-hidden">
+      <div onClick={handleClick} className="flex gap-4 cursor-pointer bg-white dark:bg-background-dark/50 rounded-2xl p-3 animate-fade-in shadow-sm hover:shadow-md transition-shadow border border-gray-100 dark:border-white/5">
+        <div className="relative w-24 h-24 shrink-0 rounded-xl overflow-hidden bg-gray-50 dark:bg-white/5">
           <img
             src={product.image}
             alt={product.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal"
           />
         </div>
         <div className="flex flex-col justify-center flex-1 min-w-0">
-          <p className="text-xs text-gray-500 dark:text-gray-400">{product.brand}</p>
-          <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary truncate">
+          <p className="text-xs font-semibold text-primary mb-0.5">{product.brand}</p>
+          <p className="text-sm font-bold text-text-light-primary dark:text-text-dark-primary truncate">
             {product.name}
           </p>
-          <div className="mt-1">
-            <span className="text-base font-bold text-text-light-primary dark:text-text-dark-primary">
+          <div className="mt-2 flex items-center justify-between">
+            <span className="text-base font-extrabold text-text-light-primary dark:text-text-dark-primary">
               {product.price.toLocaleString()}원
             </span>
+            <div className="flex items-center gap-1 text-xs text-gray-500">
+                <Star size={10} className="text-yellow-400 fill-yellow-400" />
+                {product.rating}
+            </div>
           </div>
         </div>
       </div>
@@ -41,37 +45,42 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, variant = 'gr
   }
 
   return (
-    <div onClick={handleClick} className="flex flex-col gap-2 cursor-pointer animate-fade-in group">
-      <div className="relative w-full aspect-square overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800">
+    <div onClick={handleClick} className="flex flex-col gap-3 cursor-pointer animate-fade-in group">
+      <div className="relative w-full aspect-square overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-soft hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-white/5">
         <img
           src={product.image}
           alt={product.name}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
-        <button className="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 backdrop-blur-sm dark:bg-black/50 hover:bg-white hover:text-red-500 transition-colors">
-          <Heart size={18} className="text-gray-800 dark:text-white" />
+        <button className="absolute top-2.5 right-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm dark:bg-black/50 shadow-sm hover:bg-white hover:text-red-500 hover:scale-110 transition-all text-gray-400">
+          <Heart size={18} />
         </button>
+        {product.discount && (
+            <div className="absolute top-2.5 left-2.5 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-sm">
+                {product.discount}% OFF
+            </div>
+        )}
       </div>
-      <div>
-        <p className="text-xs font-normal text-gray-500 dark:text-gray-400">{product.brand}</p>
-        <p className="text-sm font-medium leading-tight text-text-light-primary dark:text-text-dark-primary truncate">
+      <div className="px-1">
+        <p className="text-xs font-bold text-text-light-secondary dark:text-text-dark-secondary mb-1">{product.brand}</p>
+        <p className="text-sm font-bold leading-tight text-text-light-primary dark:text-text-dark-primary truncate mb-1.5 group-hover:text-primary transition-colors">
           {product.name}
         </p>
-        <div className="mt-1 flex items-center gap-2">
-          {product.discount && (
-             <span className="text-sm font-bold text-red-500">{product.discount}%</span>
-          )}
-          <span className="text-base font-bold leading-normal text-text-light-primary dark:text-text-dark-primary">
-            {product.price.toLocaleString()}원
+        <div className="flex items-center gap-2">
+          <span className="text-lg font-extrabold leading-normal text-text-light-primary dark:text-text-dark-primary">
+            {product.price.toLocaleString()}
+            <span className="text-sm font-normal ml-0.5">원</span>
           </span>
+          {product.originalPrice && (
+            <span className="text-xs text-gray-400 line-through decoration-gray-400/50">{product.originalPrice.toLocaleString()}</span>
+          )}
         </div>
-        {product.originalPrice && (
-            <span className="text-xs text-gray-400 line-through">{product.originalPrice.toLocaleString()}원</span>
-        )}
         <div className="flex items-center gap-1 mt-1">
-          <Star size={12} className="text-yellow-400 fill-yellow-400" />
-          <p className="text-xs font-normal text-gray-500 dark:text-gray-400">
-            {product.rating} ({product.reviewCount})
+          <div className="flex items-center">
+            <Star size={12} className="text-yellow-400 fill-yellow-400" />
+          </div>
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+            {product.rating} <span className="text-gray-300">|</span> 리뷰 {product.reviewCount}
           </p>
         </div>
       </div>

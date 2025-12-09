@@ -1,5 +1,5 @@
 import React from 'react';
-import { Settings, ChevronRight, Receipt, Repeat, HeartPulse, MessageSquare, HelpCircle, PhoneCall, Megaphone, Bell, Info, Edit3 } from 'lucide-react';
+import { Settings, ChevronRight, Receipt, Repeat, HeartPulse, MessageSquare, HelpCircle, PhoneCall, Megaphone, Bell, Info, Edit3, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const MyPage: React.FC = () => {
@@ -118,6 +118,17 @@ export const MyPage: React.FC = () => {
                 </div>
             </div>
           </section>
+
+          {/* Admin Login Link */}
+          <div className="flex justify-center pb-8 pt-4">
+            <button 
+              onClick={() => navigate('/admin/login')}
+              className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            >
+              <Shield size={12} />
+              <span className="underline">관리자 로그인</span>
+            </button>
+          </div>
         </div>
       </main>
     </div>
