@@ -1,61 +1,18 @@
-import React, { useState, useMemo } from 'react';
-import { ArrowLeft, Home, X, Minus, Plus } from 'lucide-react';
+import React, { useMemo } from 'react';
+import { ArrowLeft, Home, X, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { PRODUCTS } from '../constants';
-
-interface CartItemState {
-  id: string;
-  quantity: number;
-  selected: boolean;
-}
+import { useCart } from '../context/CartContext';
 
 export const Cart: React.FC = () => {
   const navigate = useNavigate();
-
-  // Initialize cart items with selected state and quantity
-  const [items, setItems] = useState<CartItemState[]>(() => {
-    // Using mock items (indices 6, 7, 8 from PRODUCTS)
-    const initialProducts = [PRODUCTS[6], PRODUCTS[7], PRODUCTS[8]];
-    return initialProducts.map(p => ({
-      id: p.id,
-      quantity: 1,
-      selected: true
-    }));
-  });
-
-  // Toggle individual item selection
-  const handleToggleSelect = (id: string) => {
-    setItems(prev => prev.map(item => 
-      item.id === id ? { ...item, selected: !item.selected } : item
-    ));
-  };
-
-  // Toggle select all
-  const handleSelectAll = () => {
-    const allSelected = items.every(item => item.selected);
-    setItems(prev => prev.map(item => ({ ...item, selected: !allSelected })));
-  };
-
-  // Update quantity
-  const handleQuantityChange = (id: string, delta: number) => {
-    setItems(prev => prev.map(item => {
-      if (item.id === id) {
-        const newQuantity = Math.max(1, item.quantity + delta);
-        return { ...item, quantity: newQuantity };
-      }
-      return item;
-    }));
-  };
-
-  // Remove item
-  const handleRemoveItem = (id: string) => {
-    setItems(prev => prev.filter(item => item.id !== id));
-  };
-
-  // Remove selected items
-  const handleRemoveSelected = () => {
-    setItems(prev => prev.filter(item => !item.selected));
-  };
+  const { 
+    cartItems, 
+    removeFromCart, 
+    updateQuantity, 
+    toggleSelection, 
+    selectAll, 
+    removeSelected 
+  } = useCart();
 
   // Calculate totals
   const { totalOriginalPrice, totalDiscount, totalProductPrice, shippingFee, finalPrice, selectedCount } = useMemo(() => {
@@ -63,14 +20,11 @@ export const Cart: React.FC = () => {
     let productPrice = 0;
     let count = 0;
 
-    items.forEach(item => {
+    cartItems.forEach(item => {
       if (item.selected) {
-        const product = PRODUCTS.find(p => p.id === item.id);
-        if (product) {
-          originalPrice += (product.originalPrice || product.price) * item.quantity;
-          productPrice += product.price * item.quantity;
-          count++;
-        }
+        originalPrice += (item.originalPrice || item.price) * item.quantity;
+        productPrice += item.price * item.quantity;
+        count++;
       }
     });
 
@@ -85,13 +39,17 @@ export const Cart: React.FC = () => {
       finalPrice: productPrice + shipping,
       selectedCount: count
     };
-  }, [items]);
+  }, [cartItems]);
 
-  const isAllSelected = items.length > 0 && items.every(item => item.selected);
+  const isAllSelected = cartItems.length > 0 && cartItems.every(item => item.selected);
+
+  const handleSelectAll = () => {
+    selectAll(!isAllSelected);
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-background-light dark:bg-background-dark pb-80">
-      <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b border-border-light dark:border-border-dark bg-white dark:bg-background-dark px-4">
+      <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b border-gray-100 dark:border-border-dark bg-white dark:bg-background-dark px-4">
         <button onClick={() => navigate(-1)} className="flex h-10 w-10 items-center justify-center -ml-2 text-text-light-primary dark:text-text-dark-primary">
           <ArrowLeft size={24} />
         </button>
@@ -101,85 +59,93 @@ export const Cart: React.FC = () => {
         </button>
       </header>
 
-      <main className="flex-1">
-        {items.length > 0 ? (
+      <main className="flex-1 p-4 space-y-4">
+        {cartItems.length > 0 ? (
           <>
-            <div className="flex items-center justify-between border-b border-border-light dark:border-border-dark bg-white dark:bg-background-dark px-4 py-3">
+            <div className="flex items-center justify-between bg-white dark:bg-white/5 px-4 py-3 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
               <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  checked={isAllSelected}
-                  onChange={handleSelectAll}
-                  className="h-5 w-5 rounded-full border-gray-300 text-primary focus:ring-primary dark:border-gray-600 dark:bg-gray-700 cursor-pointer"
-                  id="select-all"
-                />
-                <label htmlFor="select-all" className="text-base font-medium text-text-light-primary dark:text-text-dark-primary cursor-pointer">
-                  전체선택 ({selectedCount}/{items.length})
+                <div className="relative flex items-center">
+                    <input
+                    type="checkbox"
+                    checked={isAllSelected}
+                    onChange={handleSelectAll}
+                    className="peer h-5 w-5 rounded-full border-gray-300 text-primary focus:ring-primary dark:border-gray-600 dark:bg-gray-700 cursor-pointer appearance-none border checked:bg-primary checked:border-transparent transition-all"
+                    id="select-all"
+                    />
+                    <svg className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none opacity-0 peer-checked:opacity-100 text-white transition-opacity" viewBox="0 0 14 10" fill="none">
+                        <path d="M1 5L4.5 8.5L13 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                </div>
+                
+                <label htmlFor="select-all" className="text-sm font-bold text-text-light-primary dark:text-text-dark-primary cursor-pointer">
+                  전체선택 ({selectedCount}/{cartItems.length})
                 </label>
               </div>
               <button 
-                onClick={handleRemoveSelected}
-                className="text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400"
+                onClick={removeSelected}
+                className="text-xs font-medium text-gray-500 hover:text-red-500 dark:text-gray-400 transition-colors"
               >
                 선택삭제
               </button>
             </div>
 
-            <div className="mt-2 space-y-2">
-              {items.map((item, index) => {
-                const product = PRODUCTS.find(p => p.id === item.id);
-                if (!product) return null;
-
+            <div className="space-y-3">
+              {cartItems.map((item, index) => {
                 return (
-                  <div key={item.id} className="relative bg-white dark:bg-white/5 p-4 animate-slide-up" style={{ animationDelay: `${index * 50}ms` }}>
+                  <div key={item.id} className="relative bg-white dark:bg-white/5 p-4 rounded-2xl animate-slide-up shadow-sm border border-transparent hover:border-primary/10 transition-colors" style={{ animationDelay: `${index * 50}ms` }}>
                     <button 
-                      onClick={() => handleRemoveItem(item.id)}
-                      className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:text-gray-500"
+                      onClick={() => removeFromCart(item.id)}
+                      className="absolute top-4 right-4 text-gray-300 hover:text-gray-500 dark:text-gray-600"
                     >
                       <X size={20} />
                     </button>
                     <div className="flex items-start gap-4">
-                      <div className="pt-1">
-                        <input
-                          type="checkbox"
-                          checked={item.selected}
-                          onChange={() => handleToggleSelect(item.id)}
-                          className="h-5 w-5 rounded-full border-gray-300 text-primary focus:ring-primary dark:border-gray-600 dark:bg-gray-700 cursor-pointer"
-                        />
+                      <div className="pt-8">
+                        <div className="relative flex items-center">
+                            <input
+                            type="checkbox"
+                            checked={item.selected}
+                            onChange={() => toggleSelection(item.id)}
+                            className="peer h-5 w-5 rounded-full border-gray-300 text-primary focus:ring-primary dark:border-gray-600 dark:bg-gray-700 cursor-pointer appearance-none border checked:bg-primary checked:border-transparent transition-all"
+                            />
+                            <svg className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none opacity-0 peer-checked:opacity-100 text-white transition-opacity" viewBox="0 0 14 10" fill="none">
+                                <path d="M1 5L4.5 8.5L13 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                        </div>
                       </div>
-                      <div className="h-24 w-24 shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
-                          <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                      <div className="h-24 w-24 shrink-0 rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
+                          <img src={item.image} alt={item.name} className="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal" />
                       </div>
-                      <div className="flex flex-1 flex-col gap-1 min-w-0">
-                        <p className="pr-6 text-sm font-semibold text-text-light-primary dark:text-text-dark-primary leading-tight line-clamp-2">
-                          {product.name}
+                      <div className="flex flex-1 flex-col gap-1 min-w-0 pt-1">
+                        <p className="text-xs font-bold text-gray-400 dark:text-gray-500">{item.brand}</p>
+                        <p className="pr-6 text-sm font-bold text-text-light-primary dark:text-text-dark-primary leading-tight line-clamp-2">
+                          {item.name}
                         </p>
-                        <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">{product.brand}</p>
                         <div className="flex items-center gap-2 mt-1">
-                          <p className="text-base font-bold text-text-light-primary dark:text-text-dark-primary">
-                            {product.price.toLocaleString()}원
+                          <p className="text-base font-extrabold text-text-light-primary dark:text-text-dark-primary">
+                            {item.price.toLocaleString()}<span className="text-sm font-normal">원</span>
                           </p>
-                          {product.originalPrice && (
+                          {item.originalPrice && (
                             <span className="text-xs text-gray-400 line-through">
-                              {product.originalPrice.toLocaleString()}원
+                              {item.originalPrice.toLocaleString()}원
                             </span>
                           )}
                         </div>
                         
-                        <div className="mt-2 flex h-8 w-28 items-center justify-between rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-black/20">
+                        <div className="mt-2 flex h-8 w-28 items-center justify-between rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black/20 overflow-hidden">
                           <button 
-                            onClick={() => handleQuantityChange(item.id, -1)}
-                            className="flex h-full w-9 items-center justify-center text-gray-500 hover:text-primary transition-colors disabled:opacity-30"
+                            onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
+                            className="flex h-full w-9 items-center justify-center text-gray-500 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors disabled:opacity-30"
                             disabled={item.quantity <= 1}
                           >
-                            <Minus size={16} />
+                            <Minus size={14} />
                           </button>
-                          <span className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">{item.quantity}</span>
+                          <span className="text-sm font-bold text-text-light-primary dark:text-text-dark-primary">{item.quantity}</span>
                           <button 
-                            onClick={() => handleQuantityChange(item.id, 1)}
-                            className="flex h-full w-9 items-center justify-center text-gray-500 hover:text-primary transition-colors"
+                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            className="flex h-full w-9 items-center justify-center text-gray-500 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
                           >
-                            <Plus size={16} />
+                            <Plus size={14} />
                           </button>
                         </div>
                       </div>
@@ -190,11 +156,14 @@ export const Cart: React.FC = () => {
             </div>
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center h-full pt-32 text-gray-400">
-            <p className="mb-4">장바구니에 담긴 상품이 없습니다.</p>
+          <div className="flex flex-col items-center justify-center h-[60vh] text-gray-400">
+            <div className="w-20 h-20 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-6 text-gray-300">
+                <ShoppingBag size={40} />
+            </div>
+            <p className="mb-6 font-medium">장바구니에 담긴 상품이 없습니다.</p>
             <button 
               onClick={() => navigate('/list')}
-              className="px-6 py-2 bg-primary text-white rounded-lg text-sm font-bold"
+              className="px-8 py-3 bg-primary text-white rounded-full text-sm font-bold shadow-lg shadow-primary/30 hover:bg-primary-dark transition-colors"
             >
               상품 보러가기
             </button>
@@ -202,33 +171,33 @@ export const Cart: React.FC = () => {
         )}
       </main>
 
-      {items.length > 0 && (
-        <footer className="fixed bottom-[84px] left-0 right-0 z-10 border-t border-border-light dark:border-border-dark bg-white dark:bg-background-dark p-4 shadow-top">
-          <div className="space-y-2 mb-4">
-            <div className="flex justify-between text-base text-text-light-secondary dark:text-text-dark-secondary">
+      {cartItems.length > 0 && (
+        <footer className="fixed bottom-[84px] left-0 right-0 z-10 border-t border-gray-100 dark:border-border-dark bg-white dark:bg-background-dark p-5 shadow-top rounded-t-[2rem]">
+          <div className="space-y-3 mb-5 max-w-[480px] mx-auto">
+            <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
               <span>상품 금액</span>
-              <span>{totalProductPrice.toLocaleString()}원</span>
+              <span className="font-medium text-gray-900 dark:text-gray-200">{totalProductPrice.toLocaleString()}원</span>
             </div>
             {totalDiscount > 0 && (
-               <div className="flex justify-between text-base text-text-light-secondary dark:text-text-dark-secondary">
+               <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
                 <span>할인 금액</span>
-                <span className="text-red-500">- {totalDiscount.toLocaleString()}원</span>
+                <span className="font-medium text-secondary">- {totalDiscount.toLocaleString()}원</span>
               </div>
             )}
-            <div className="flex justify-between text-base text-text-light-secondary dark:text-text-dark-secondary">
+            <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
               <span>배송비</span>
-              <span>+ {shippingFee.toLocaleString()}원</span>
+              <span className="font-medium text-gray-900 dark:text-gray-200">+ {shippingFee.toLocaleString()}원</span>
             </div>
-            <div className="my-2 h-px bg-border-light dark:border-border-dark"></div>
+            <div className="my-2 h-px bg-gray-100 dark:border-gray-700"></div>
             <div className="flex justify-between items-center">
-              <span className="text-lg font-bold text-text-light-primary dark:text-text-dark-primary">결제 예정 금액</span>
-              <span className="text-xl font-bold text-primary">{finalPrice.toLocaleString()}원</span>
+              <span className="text-base font-bold text-gray-900 dark:text-white">결제 예정 금액</span>
+              <span className="text-2xl font-black text-primary">{finalPrice.toLocaleString()}<span className="text-lg font-bold text-gray-900 dark:text-white ml-1">원</span></span>
             </div>
           </div>
           <button 
             onClick={() => navigate('/checkout')}
             disabled={selectedCount === 0}
-            className="w-full h-14 rounded-xl bg-primary text-base font-bold text-white hover:bg-primary-dark transition-colors shadow-lg shadow-primary/20 disabled:bg-gray-300 disabled:shadow-none disabled:cursor-not-allowed"
+            className="w-full h-14 rounded-2xl bg-gradient-to-r from-primary to-secondary text-base font-bold text-white hover:opacity-95 transition-all shadow-lg shadow-primary/20 disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed max-w-[480px] mx-auto block"
           >
             {finalPrice.toLocaleString()}원 결제하기
           </button>
