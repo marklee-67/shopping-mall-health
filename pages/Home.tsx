@@ -33,7 +33,7 @@ export const Home: React.FC = () => {
       <main className="flex-1">
         {/* Hero Banner - Dark Tech Style */}
         <div className="px-4 pt-4 pb-2">
-          <div className="relative overflow-hidden rounded-3xl min-h-[240px] shadow-2xl shadow-blue-900/20 group">
+          <div className="relative overflow-hidden rounded-3xl min-h-[240px] shadow-2xl shadow-purple-900/20 group">
             {/* Background Image & Gradient */}
             <div 
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
@@ -41,26 +41,26 @@ export const Home: React.FC = () => {
                 backgroundImage: `url('https://images.unsplash.com/photo-1544367563-12123d8965cd?auto=format&fit=crop&q=80&w=800')`
               }}
             />
-            <div className="absolute inset-0 bg-gradient-to-tr from-slate-900 via-blue-900/80 to-purple-900/40" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-slate-900 via-purple-900/80 to-pink-900/40" />
             
             {/* Content */}
             <div className="absolute inset-0 p-7 flex flex-col justify-end">
               <div className="transform transition-transform duration-500 translate-y-0">
-                <span className="inline-block px-3 py-1 mb-3 text-xs font-bold text-blue-200 bg-blue-900/50 backdrop-blur-md rounded-full border border-blue-500/30">
+                <span className="inline-block px-3 py-1 mb-3 text-xs font-bold text-purple-200 bg-purple-900/50 backdrop-blur-md rounded-full border border-purple-500/30">
                   NEW ARRIVAL
                 </span>
                 <h2 className="text-white text-3xl font-bold leading-tight mb-2 drop-shadow-md">
                   하루의 시작,<br/>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-300">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-300">
                     에너지 충전
                   </span>
                 </h2>
-                <p className="text-blue-100/90 text-sm font-medium mb-6 max-w-[200px] leading-relaxed">
+                <p className="text-purple-100/90 text-sm font-medium mb-6 max-w-[200px] leading-relaxed">
                   활기찬 내일을 위한 프리미엄 비타민 컬렉션을 만나보세요.
                 </p>
                 <button 
                   onClick={() => navigate('/list')}
-                  className="bg-white text-primary font-bold text-sm px-6 py-3 rounded-full hover:bg-blue-50 transition-colors shadow-lg shadow-black/10 flex items-center gap-2 w-fit"
+                  className="bg-white text-primary font-bold text-sm px-6 py-3 rounded-full hover:bg-purple-50 transition-colors shadow-lg shadow-black/10 flex items-center gap-2 w-fit"
                 >
                   지금 구매하기 <ArrowRight size={16} />
                 </button>
@@ -70,7 +70,7 @@ export const Home: React.FC = () => {
         </div>
 
         {/* Categories - Pastel Gradient Strip */}
-        <div className="py-8 my-4 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 dark:from-blue-900/20 dark:via-purple-900/20 dark:to-pink-900/20">
+        <div className="py-8 my-4 bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50 dark:from-purple-900/20 dark:via-pink-900/20 dark:to-purple-900/20">
           <div className="overflow-x-auto scrollbar-hide">
             <div className="flex px-4 gap-6 min-w-max">
               {[
@@ -160,7 +160,7 @@ export const Home: React.FC = () => {
 
         {/* Health Info Card - Gradient Style */}
         <div className="px-4 mt-8 mb-4">
-          <div className="relative overflow-hidden bg-gradient-to-r from-violet-500 to-fuchsia-500 p-6 rounded-3xl cursor-pointer shadow-xl shadow-violet-500/20 group">
+          <div className="relative overflow-hidden bg-gradient-to-r from-purple-500 to-pink-500 p-6 rounded-3xl cursor-pointer shadow-xl shadow-purple-500/20 group">
              {/* Decorative Circles */}
              <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white/20 blur-2xl"></div>
              <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full bg-black/10 blur-xl"></div>
@@ -175,7 +175,7 @@ export const Home: React.FC = () => {
                 </h3>
                 <p className="text-white/80 text-xs mt-2 group-hover:text-white transition-colors">지금 확인하기 &rarr;</p>
               </div>
-              <div className="h-12 w-12 flex items-center justify-center rounded-full bg-white text-violet-600 shadow-lg group-hover:scale-110 transition-transform">
+              <div className="h-12 w-12 flex items-center justify-center rounded-full bg-white text-purple-600 shadow-lg group-hover:scale-110 transition-transform">
                 <ArrowRight size={24} />
               </div>
             </div>
