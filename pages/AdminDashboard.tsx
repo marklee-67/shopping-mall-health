@@ -12,17 +12,31 @@ import {
   Trash2,
   Search,
   MoreVertical,
-  CheckCircle,
-  Clock
+  X,
+  Image as ImageIcon,
+  Edit
 } from 'lucide-react';
-import { PRODUCTS } from '../constants';
+import { CATEGORY_LABELS } from '../constants';
 import { Product } from '../types';
+import { useProducts } from '../context/ProductContext';
 
 export const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
+  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
   const [activeTab, setActiveTab] = useState<'dashboard' | 'products' | 'orders'>('dashboard');
-  const [products, setProducts] = useState<Product[]>(PRODUCTS);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  
+  // Add/Edit Product State
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [newProduct, setNewProduct] = useState({
+    brand: '',
+    name: '',
+    price: '',
+    originalPrice: '',
+    category: 'IMMUNITY',
+    image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=400'
+  });
 
   // Mock Orders Data
   const orders = [
@@ -34,12 +48,92 @@ export const AdminDashboard: React.FC = () => {
   ];
 
   const handleDeleteProduct = (id: string) => {
-    setProducts(products.filter(p => p.id !== id));
+    deleteProduct(id);
     setShowDeleteConfirm(null);
   };
 
-  const handleAddProduct = () => {
-    alert('상품 추가 기능은 데모 버전에서 지원하지 않습니다.');
+  const handleAddProductClick = () => {
+    setEditingId(null);
+    setNewProduct({
+        brand: '',
+        name: '',
+        price: '',
+        originalPrice: '',
+        category: 'IMMUNITY',
+        image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=400'
+    });
+    setIsAddModalOpen(true);
+  };
+
+  const handleEditProductClick = (product: Product) => {
+    setEditingId(product.id);
+    setNewProduct({
+        brand: product.brand,
+        name: product.name,
+        price: String(product.price),
+        originalPrice: product.originalPrice ? String(product.originalPrice) : '',
+        category: product.category,
+        image: product.image
+    });
+    setIsAddModalOpen(true);
+  };
+
+  const handleSaveProduct = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newProduct.brand || !newProduct.name || !newProduct.price) {
+        alert('필수 정보를 모두 입력해주세요.');
+        return;
+    }
+
+    const price = Number(newProduct.price);
+    const originalPrice = newProduct.originalPrice ? Number(newProduct.originalPrice) : undefined;
+    
+    // Calculate discount if originalPrice exists
+    let discount: number | undefined = undefined;
+    if (originalPrice && originalPrice > price) {
+        discount = Math.round(((originalPrice - price) / originalPrice) * 100);
+    }
+
+    const productData = {
+        brand: newProduct.brand,
+        name: newProduct.name,
+        price: price,
+        originalPrice: originalPrice,
+        discount: discount,
+        category: newProduct.category,
+        image: newProduct.image
+    };
+
+    if (editingId) {
+        // Edit Mode
+        const existingProduct = products.find(p => p.id === editingId);
+        if (existingProduct) {
+          updateProduct({
+              ...existingProduct,
+              ...productData
+          });
+        }
+    } else {
+        // Add Mode
+        const productToAdd: Product = {
+            id: Date.now().toString(),
+            ...productData,
+            rating: 0,
+            reviewCount: 0,
+        };
+        addProduct(productToAdd);
+    }
+    
+    setIsAddModalOpen(false);
+    setEditingId(null);
+    setNewProduct({
+        brand: '',
+        name: '',
+        price: '',
+        originalPrice: '',
+        category: 'IMMUNITY',
+        image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=400'
+    });
   };
 
   const getStatusBadge = (status: string) => {
@@ -53,7 +147,7 @@ export const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-background-dark pb-20">
+    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-background-dark pb-20 relative">
       {/* Admin Header */}
       <header className="sticky top-0 z-20 flex h-14 items-center justify-between bg-slate-900 px-4 shadow-md">
         <div className="flex items-center gap-2">
@@ -169,7 +263,7 @@ export const AdminDashboard: React.FC = () => {
                 />
               </div>
               <button 
-                onClick={handleAddProduct}
+                onClick={handleAddProductClick}
                 className="h-10 px-4 bg-primary text-white rounded-lg text-sm font-bold flex items-center gap-1 shadow-md shadow-primary/20"
               >
                 <Plus size={16} />
@@ -186,15 +280,31 @@ export const AdminDashboard: React.FC = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start">
                       <p className="text-xs text-gray-500">{product.brand}</p>
-                      <button 
-                        onClick={() => setShowDeleteConfirm(product.id)}
-                        className="text-gray-400 hover:text-red-500 p-1 -mt-1 -mr-1"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                      <div className="flex gap-1 -mt-1 -mr-1">
+                        <button 
+                            onClick={() => handleEditProductClick(product)}
+                            className="text-gray-400 hover:text-primary p-1"
+                        >
+                            <Edit size={16} />
+                        </button>
+                        <button 
+                            onClick={() => setShowDeleteConfirm(product.id)}
+                            className="text-gray-400 hover:text-red-500 p-1"
+                        >
+                            <Trash2 size={16} />
+                        </button>
+                      </div>
                     </div>
                     <h4 className="font-bold text-sm text-gray-900 dark:text-white truncate pr-6">{product.name}</h4>
-                    <p className="text-primary font-bold mt-1 text-sm">{product.price.toLocaleString()}원</p>
+                    <div className="mt-1 flex items-center gap-1.5">
+                        {product.originalPrice && (
+                             <span className="text-xs text-gray-400 line-through">{product.originalPrice.toLocaleString()}원</span>
+                        )}
+                        <span className="text-primary font-bold text-sm">{product.price.toLocaleString()}원</span>
+                        {product.discount && (
+                            <span className="text-xs font-bold text-secondary bg-secondary/10 px-1.5 py-0.5 rounded">{product.discount}%</span>
+                        )}
+                    </div>
                   </div>
                   
                   {/* Delete Confirmation Overlay */}
@@ -254,6 +364,108 @@ export const AdminDashboard: React.FC = () => {
           </div>
         )}
       </main>
+
+      {/* Add/Edit Product Modal */}
+      {isAddModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+            <div className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-sm max-h-[90vh] overflow-y-auto shadow-2xl">
+                <div className="p-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
+                    <h2 className="text-lg font-bold text-gray-900 dark:text-white">
+                        {editingId ? '상품 수정' : '상품 등록'}
+                    </h2>
+                    <button onClick={() => setIsAddModalOpen(false)} className="text-gray-400 hover:text-gray-600">
+                        <X size={24} />
+                    </button>
+                </div>
+                
+                <form onSubmit={handleSaveProduct} className="p-5 space-y-4">
+                    <div className="space-y-1">
+                        <label className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1">브랜드</label>
+                        <input 
+                            type="text" 
+                            required
+                            placeholder="예: 헬시 라이프"
+                            value={newProduct.brand}
+                            onChange={(e) => setNewProduct({...newProduct, brand: e.target.value})}
+                            className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3 text-sm focus:border-primary outline-none" 
+                        />
+                    </div>
+                    <div className="space-y-1">
+                        <label className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1">상품명</label>
+                        <input 
+                            type="text" 
+                            required
+                            placeholder="상품명을 입력하세요"
+                            value={newProduct.name}
+                            onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
+                            className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3 text-sm focus:border-primary outline-none" 
+                        />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                            <label className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1">할인 전 가격 <span className="text-xs font-normal text-gray-400">(선택)</span></label>
+                            <input 
+                                type="number" 
+                                placeholder="0"
+                                value={newProduct.originalPrice}
+                                onChange={(e) => setNewProduct({...newProduct, originalPrice: e.target.value})}
+                                className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3 text-sm focus:border-primary outline-none" 
+                            />
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1">판매 가격</label>
+                            <input 
+                                type="number" 
+                                required
+                                placeholder="0"
+                                value={newProduct.price}
+                                onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
+                                className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3 text-sm focus:border-primary outline-none" 
+                            />
+                        </div>
+                    </div>
+                    <div className="space-y-1">
+                        <label className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1">카테고리</label>
+                        <select 
+                            value={newProduct.category}
+                            onChange={(e) => setNewProduct({...newProduct, category: e.target.value})}
+                            className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3 text-sm focus:border-primary outline-none"
+                        >
+                            {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
+                                key !== 'ALL' && <option key={key} value={key}>{label}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="space-y-1">
+                        <label className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1">이미지 URL</label>
+                        <div className="relative">
+                            <ImageIcon size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                            <input 
+                                type="text" 
+                                required
+                                placeholder="https://..."
+                                value={newProduct.image}
+                                onChange={(e) => setNewProduct({...newProduct, image: e.target.value})}
+                                className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3 pl-10 text-sm focus:border-primary outline-none" 
+                            />
+                        </div>
+                        {newProduct.image && (
+                            <div className="mt-2 w-full h-32 rounded-xl bg-gray-100 dark:bg-gray-800 overflow-hidden border border-gray-200 dark:border-gray-700">
+                                <img src={newProduct.image} alt="Preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                            </div>
+                        )}
+                    </div>
+
+                    <button 
+                        type="submit"
+                        className="w-full py-3.5 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:bg-primary-dark transition-colors mt-4"
+                    >
+                        {editingId ? '수정 완료' : '상품 등록하기'}
+                    </button>
+                </form>
+            </div>
+        </div>
+      )}
     </div>
   );
 };

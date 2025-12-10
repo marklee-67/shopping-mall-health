@@ -17,6 +17,7 @@ import { Notice } from './pages/Notice';
 import { NotificationSettings } from './pages/NotificationSettings';
 import { AdminLogin } from './pages/AdminLogin';
 import { AdminDashboard } from './pages/AdminDashboard';
+import { HealthTip } from './pages/HealthTip';
 
 const App: React.FC = () => {
   return (
@@ -39,6 +40,7 @@ const App: React.FC = () => {
           <Route path="/mypage/settings/notifications" element={<NotificationSettings />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/health-tip" element={<HealthTip />} />
         </Routes>
       </Layout>
     </HashRouter>

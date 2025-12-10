@@ -1,14 +1,16 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { ArrowLeft, Search, ShoppingBag, SlidersHorizontal, X } from 'lucide-react';
-import { PRODUCTS, CATEGORY_LABELS } from '../constants';
+import { CATEGORY_LABELS } from '../constants';
 import { ProductCard } from '../components/ProductCard';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useProducts } from '../context/ProductContext';
 
 export const ProductList: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as { category?: string; searchQuery?: string } | null;
+  const { products } = useProducts();
   
   const initialCategory = state?.category || 'ALL';
   const initialSearchQuery = state?.searchQuery || '';
@@ -32,7 +34,7 @@ export const ProductList: React.FC = () => {
   const totalCartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const sortedProducts = useMemo(() => {
-    let items = [...PRODUCTS];
+    let items = [...products];
 
     // Filter by category
     if (initialCategory !== 'ALL') {
@@ -60,7 +62,7 @@ export const ProductList: React.FC = () => {
       default:
         return items;
     }
-  }, [activeFilter, initialCategory, searchQuery]);
+  }, [activeFilter, initialCategory, searchQuery, products]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();

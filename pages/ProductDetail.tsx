@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Share2, Heart, ShoppingBag, Calendar, CheckCircle, ArrowRight, Star, User, ThumbsUp, HelpCircle, ChevronDown } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PRODUCTS } from '../constants';
 import { useCart } from '../context/CartContext';
+import { useProducts } from '../context/ProductContext';
 
 export const ProductDetail: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const product = PRODUCTS.find(p => p.id === id) || PRODUCTS[0];
+  const { products } = useProducts();
+  const product = products.find(p => p.id === id) || products[0];
   const [activeTab, setActiveTab] = useState('detail');
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const { cartItems, addToCart, toggleCart } = useCart();

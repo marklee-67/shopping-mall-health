@@ -40,9 +40,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, variant = 'gr
             {product.name}
           </p>
           <div className="mt-2 flex items-center justify-between">
-            <span className="text-base font-extrabold text-text-light-primary dark:text-text-dark-primary">
-              {product.price.toLocaleString()}원
-            </span>
+            <div className="flex items-center gap-1.5">
+               {product.discount && (
+                 <span className="text-base font-extrabold text-secondary">{product.discount}%</span>
+               )}
+               <span className="text-base font-extrabold text-text-light-primary dark:text-text-dark-primary">
+                {product.price.toLocaleString()}원
+               </span>
+            </div>
             <div className="flex items-center gap-1 text-xs text-gray-500">
                 <Star size={10} className="text-yellow-400 fill-yellow-400" />
                 {product.rating}
@@ -87,6 +92,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, variant = 'gr
           {product.name}
         </p>
         <div className="flex items-center gap-2">
+          {product.discount && (
+            <span className="text-lg font-extrabold text-secondary">{product.discount}%</span>
+          )}
           <span className="text-lg font-extrabold leading-normal text-text-light-primary dark:text-text-dark-primary">
             {product.price.toLocaleString()}
             <span className="text-sm font-normal ml-0.5">원</span>

@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Search, ShoppingCart, ArrowRight, ArrowLeft, X } from 'lucide-react';
-import { CATEGORY_LABELS, PRODUCTS } from '../constants';
+import { CATEGORY_LABELS } from '../constants';
 import { ProductCard } from '../components/ProductCard';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useProducts } from '../context/ProductContext';
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
   const { cartItems } = useCart();
+  const { products } = useProducts();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -174,7 +176,7 @@ export const Home: React.FC = () => {
 
         {/* Product Grid */}
         <div className="grid grid-cols-2 gap-x-4 gap-y-6 px-4">
-          {PRODUCTS.slice(0, 4).map((product) => (
+          {products.slice(0, 4).map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
@@ -203,7 +205,10 @@ export const Home: React.FC = () => {
 
         {/* Health Info Card - Gradient Style */}
         <div className="px-4 mt-8 mb-4">
-          <div className="relative overflow-hidden bg-gradient-to-r from-purple-500 to-pink-500 p-6 rounded-3xl cursor-pointer shadow-xl shadow-purple-500/20 group">
+          <div 
+            onClick={() => navigate('/health-tip')}
+            className="relative overflow-hidden bg-gradient-to-r from-purple-500 to-pink-500 p-6 rounded-3xl cursor-pointer shadow-xl shadow-purple-500/20 group"
+          >
              {/* Decorative Circles */}
              <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white/20 blur-2xl"></div>
              <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full bg-black/10 blur-xl"></div>
