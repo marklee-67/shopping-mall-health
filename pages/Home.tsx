@@ -1,5 +1,5 @@
-import React from 'react';
-import { Search, ShoppingCart, ArrowRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { Search, ShoppingCart, ArrowRight, ArrowLeft, X } from 'lucide-react';
 import { CATEGORY_LABELS, PRODUCTS } from '../constants';
 import { ProductCard } from '../components/ProductCard';
 import { useNavigate } from 'react-router-dom';
@@ -8,32 +8,88 @@ import { useCart } from '../context/CartContext';
 export const Home: React.FC = () => {
   const navigate = useNavigate();
   const { cartItems } = useCart();
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const totalCartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate('/list', { state: { searchQuery: searchQuery } });
+      setIsSearchOpen(false);
+      setSearchQuery('');
+    }
+  };
 
   return (
     <div className="flex flex-col pb-24 bg-background-light dark:bg-background-dark">
       {/* Header */}
       <div className="sticky top-0 z-20 flex h-16 shrink-0 items-center justify-between bg-white/80 dark:bg-background-dark/80 px-4 backdrop-blur-md border-b border-gray-100 dark:border-border-dark transition-all">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg shadow-glow">
-             <span className="text-white font-bold text-sm">P</span>
-          </div>
-          <h1 className="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-tight">Peroxfarma Mall</h1>
-        </div>
-        <div className="flex items-center gap-3">
-          <button className="flex h-10 w-10 items-center justify-center rounded-full text-text-light-primary dark:text-text-dark-primary hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
-            <Search size={22} strokeWidth={2.5} />
-          </button>
-          <button onClick={() => navigate('/cart')} className="relative flex h-10 w-10 items-center justify-center rounded-full text-text-light-primary dark:text-text-dark-primary hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
-            <ShoppingCart size={22} strokeWidth={2.5} />
-            {totalCartCount > 0 && (
-              <div className="absolute top-1.5 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shadow-sm ring-2 ring-white dark:ring-background-dark animate-fade-in">
-                {totalCartCount}
-              </div>
-            )}
-          </button>
-        </div>
+        {isSearchOpen ? (
+          <form onSubmit={handleSearch} className="flex w-full items-center gap-2 animate-fade-in">
+             <button 
+                type="button" 
+                onClick={() => {
+                    setIsSearchOpen(false);
+                    setSearchQuery('');
+                }}
+                className="flex h-10 w-10 items-center justify-center -ml-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-colors"
+             >
+                <ArrowLeft size={22} />
+             </button>
+             <div className="flex-1 relative">
+                <input 
+                    type="text" 
+                    value={searchQuery} 
+                    onChange={(e) => setSearchQuery(e.target.value)} 
+                    placeholder="검색어를 입력하세요"
+                    autoFocus
+                    className="w-full h-10 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-gray-700 rounded-full px-4 text-sm outline-none focus:border-primary transition-all"
+                />
+                {searchQuery && (
+                    <button 
+                        type="button"
+                        onClick={() => setSearchQuery('')}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                        <X size={14} />
+                    </button>
+                )}
+             </div>
+             <button 
+                type="submit" 
+                className="flex h-10 w-10 items-center justify-center -mr-2 text-primary hover:bg-primary/5 rounded-full transition-colors"
+             >
+                <Search size={22} />
+             </button>
+          </form>
+        ) : (
+            <>
+                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg shadow-glow">
+                    <span className="text-white font-bold text-sm">P</span>
+                </div>
+                <h1 className="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-tight">Peroxfarma Mall</h1>
+                </div>
+                <div className="flex items-center gap-3">
+                <button 
+                    onClick={() => setIsSearchOpen(true)}
+                    className="flex h-10 w-10 items-center justify-center rounded-full text-text-light-primary dark:text-text-dark-primary hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                >
+                    <Search size={22} strokeWidth={2.5} />
+                </button>
+                <button onClick={() => navigate('/cart')} className="relative flex h-10 w-10 items-center justify-center rounded-full text-text-light-primary dark:text-text-dark-primary hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                    <ShoppingCart size={22} strokeWidth={2.5} />
+                    {totalCartCount > 0 && (
+                    <div className="absolute top-1.5 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shadow-sm ring-2 ring-white dark:ring-background-dark animate-fade-in">
+                        {totalCartCount}
+                    </div>
+                    )}
+                </button>
+                </div>
+            </>
+        )}
       </div>
 
       <main className="flex-1">
@@ -88,7 +144,7 @@ export const Home: React.FC = () => {
               ].map((cat) => (
                 <button
                   key={cat.id}
-                  onClick={() => navigate('/list')}
+                  onClick={() => navigate('/list', { state: { category: cat.id } })}
                   className="flex flex-col items-center gap-3 group"
                 >
                   <div className="w-16 h-16 rounded-full bg-white dark:bg-white/10 shadow-soft shadow-purple-200/50 dark:shadow-none flex items-center justify-center text-2xl group-active:scale-95 transition-all duration-300 border-2 border-white dark:border-white/10 group-hover:border-primary/20">
@@ -129,7 +185,7 @@ export const Home: React.FC = () => {
           {/* Daily Health Section */}
           <div className="relative overflow-hidden rounded-3xl h-[280px] shadow-2xl shadow-blue-900/10 group cursor-pointer" onClick={() => navigate('/product/2')}>
              <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" 
-                  style={{backgroundImage: "url('https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?q=80&w=800&auto=format&fit=crop')"}}></div>
+                  style={{backgroundImage: "url('https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&q=80&w=800')"}}></div>
              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent opacity-90"></div>
              
              <div className="absolute bottom-0 left-0 right-0 p-8 flex flex-col items-start">

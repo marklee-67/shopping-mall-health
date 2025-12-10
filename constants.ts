@@ -45,7 +45,7 @@ export const PRODUCTS: Product[] = [
     price: 35000,
     rating: 4.7,
     reviewCount: 2100,
-    image: 'https://images.unsplash.com/photo-1616671276445-162152671d8f?auto=format&fit=crop&q=80&w=400',
+    image: 'https://images.unsplash.com/photo-1498557850523-fd3d118b962e?auto=format&fit=crop&q=80&w=400',
     category: Category.EYE,
   },
   {
@@ -65,7 +65,7 @@ export const PRODUCTS: Product[] = [
     price: 55000,
     rating: 4.8,
     reviewCount: 789,
-    image: 'https://images.unsplash.com/photo-1551241640-2b3d547549b5?auto=format&fit=crop&q=80&w=400',
+    image: 'https://images.unsplash.com/photo-1593034509785-5b17ba49f683?auto=format&fit=crop&q=80&w=400',
     category: Category.EYE,
   },
   {
@@ -85,7 +85,7 @@ export const PRODUCTS: Product[] = [
     price: 28000,
     rating: 4.9,
     reviewCount: 2300,
-    image: 'https://images.unsplash.com/photo-1585441853942-0d255885a559?auto=format&fit=crop&q=80&w=400',
+    image: 'https://images.unsplash.com/photo-1626808642875-0aa545482dfb?auto=format&fit=crop&q=80&w=400',
     category: Category.IMMUNITY,
   },
   {
@@ -97,6 +97,26 @@ export const PRODUCTS: Product[] = [
     reviewCount: 5000,
     image: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=400',
     category: Category.IMMUNITY,
+  },
+  {
+    id: '10',
+    brand: '본닥터',
+    name: '[본닥터] 관절 365 MSM',
+    price: 45000,
+    rating: 4.8,
+    reviewCount: 320,
+    image: 'https://images.unsplash.com/photo-1585336261022-680e295ce3fe?auto=format&fit=crop&q=80&w=400',
+    category: Category.JOINT,
+  },
+  {
+    id: '11',
+    brand: '칼슘가득',
+    name: '[칼슘가득] 어골칼슘 마그네슘 비타민D',
+    price: 32900,
+    rating: 4.7,
+    reviewCount: 150,
+    image: 'https://images.unsplash.com/photo-1471864190281-a93a3070b6de?auto=format&fit=crop&q=80&w=400',
+    category: Category.JOINT,
   },
 ];
 

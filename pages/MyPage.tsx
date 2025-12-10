@@ -5,13 +5,29 @@ import { useNavigate } from 'react-router-dom';
 export const MyPage: React.FC = () => {
   const navigate = useNavigate();
 
+  const HEALTH_MENU = [
+    { icon: Receipt, label: '주문 내역 조회', path: '/mypage/orders' },
+    { icon: Repeat, label: '정기구독 관리', path: '/mypage/subscriptions' },
+    { icon: HeartPulse, label: '건강 상담 신청', path: '/mypage/consultations' },
+    { icon: MessageSquare, label: '상품 리뷰', path: '/mypage/reviews' },
+  ];
+
+  const CUSTOMER_MENU = [
+    { icon: HelpCircle, label: '자주 묻는 질문', path: '/mypage/faq' },
+    { icon: PhoneCall, label: '1:1 문의', path: '/mypage/inquiry' },
+    { icon: Megaphone, label: '공지사항', path: '/mypage/notice' },
+  ];
+
   return (
     <div className="flex flex-col min-h-screen bg-background-light dark:bg-background-dark pb-24">
       {/* Header */}
       <header className="sticky top-0 z-10 flex h-14 items-center justify-between bg-white/80 dark:bg-background-dark/80 px-4 backdrop-blur-md border-b border-transparent transition-all">
         <div className="w-10"></div>
         <h1 className="text-base font-bold text-text-light-primary dark:text-text-dark-primary">마이페이지</h1>
-        <button className="flex h-10 w-10 items-center justify-center text-text-light-primary dark:text-text-dark-primary hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-colors">
+        <button 
+          onClick={() => navigate('/mypage/settings/notifications')}
+          className="flex h-10 w-10 items-center justify-center text-text-light-primary dark:text-text-dark-primary hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-colors"
+        >
           <Settings size={22} />
         </button>
       </header>
@@ -54,13 +70,12 @@ export const MyPage: React.FC = () => {
           <section>
             <h3 className="text-sm font-bold text-gray-400 dark:text-gray-500 mb-3 px-1">나의 건강 관리</h3>
             <div className="rounded-2xl bg-white dark:bg-white/5 overflow-hidden shadow-sm border border-gray-100 dark:border-gray-800">
-              {[
-                { icon: Receipt, label: '주문 내역 조회' },
-                { icon: Repeat, label: '정기구독 관리' },
-                { icon: HeartPulse, label: '건강 상담 신청' },
-                { icon: MessageSquare, label: '상품 리뷰' },
-              ].map((item, i) => (
-                <button key={i} className="flex w-full items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-0 group">
+              {HEALTH_MENU.map((item, i) => (
+                <button 
+                  key={i} 
+                  onClick={() => navigate(item.path)}
+                  className="flex w-full items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-0 group"
+                >
                   <div className="flex items-center gap-3">
                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 group-hover:text-primary group-hover:bg-primary/10 transition-colors">
                       <item.icon size={18} />
@@ -76,12 +91,12 @@ export const MyPage: React.FC = () => {
           <section>
             <h3 className="text-sm font-bold text-gray-400 dark:text-gray-500 mb-3 px-1">고객센터</h3>
             <div className="rounded-2xl bg-white dark:bg-white/5 overflow-hidden shadow-sm border border-gray-100 dark:border-gray-800">
-              {[
-                { icon: HelpCircle, label: '자주 묻는 질문' },
-                { icon: PhoneCall, label: '1:1 문의' },
-                { icon: Megaphone, label: '공지사항' },
-              ].map((item, i) => (
-                <button key={i} className="flex w-full items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-0 group">
+              {CUSTOMER_MENU.map((item, i) => (
+                <button 
+                  key={i} 
+                  onClick={() => navigate(item.path)}
+                  className="flex w-full items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-0 group"
+                >
                   <div className="flex items-center gap-3">
                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 group-hover:text-primary group-hover:bg-primary/10 transition-colors">
                       <item.icon size={18} />
@@ -97,7 +112,10 @@ export const MyPage: React.FC = () => {
           <section>
             <h3 className="text-sm font-bold text-gray-400 dark:text-gray-500 mb-3 px-1">앱 설정</h3>
             <div className="rounded-2xl bg-white dark:bg-white/5 overflow-hidden shadow-sm border border-gray-100 dark:border-gray-800">
-                <button className="flex w-full items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors border-b border-gray-100 dark:border-gray-800 group">
+                <button 
+                  onClick={() => navigate('/mypage/settings/notifications')}
+                  className="flex w-full items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors border-b border-gray-100 dark:border-gray-800 group"
+                >
                   <div className="flex items-center gap-3">
                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 group-hover:text-primary group-hover:bg-primary/10 transition-colors">
                       <Bell size={18} />
