@@ -5,12 +5,14 @@ import { ProductCard } from '../components/ProductCard';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useProducts } from '../context/ProductContext';
+import { useAuth } from '../context/AuthContext';
 
 export const ProductList: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as { category?: string; searchQuery?: string } | null;
   const { products } = useProducts();
+  const { isAuthenticated } = useAuth();
   
   const initialCategory = state?.category || 'ALL';
   const initialSearchQuery = state?.searchQuery || '';
@@ -67,6 +69,15 @@ export const ProductList: React.FC = () => {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Force re-render/filter with current local searchQuery state
+  };
+
+  const handleCartClick = () => {
+    if (!isAuthenticated) {
+      alert('회원가입이 필요한 서비스입니다.\n회원가입 페이지로 이동합니다.');
+      navigate('/signup', { state: { from: '/cart' } });
+      return;
+    }
+    navigate('/cart');
   };
 
   return (
@@ -128,7 +139,7 @@ export const ProductList: React.FC = () => {
                 >
                     <Search size={22} />
                 </button>
-                <button onClick={() => navigate('/cart')} className="relative flex h-10 w-10 items-center justify-center -mr-2 text-text-light-primary dark:text-text-dark-primary hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-colors">
+                <button onClick={handleCartClick} className="relative flex h-10 w-10 items-center justify-center -mr-2 text-text-light-primary dark:text-text-dark-primary hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-colors">
                     <ShoppingBag size={22} />
                     {totalCartCount > 0 && (
                     <div className="absolute top-1 right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white shadow-sm ring-1 ring-white dark:ring-background-dark animate-fade-in">

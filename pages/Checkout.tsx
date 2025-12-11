@@ -2,11 +2,13 @@ import React, { useState, useMemo } from 'react';
 import { ArrowLeft, ChevronDown, Check, CreditCard, Smartphone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 export const Checkout: React.FC = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(true);
   const { cartItems } = useCart();
+  const { user } = useAuth();
 
   // Calculate totals based on selected items in cart
   const { totalProductPrice, totalDiscount, shippingFee, finalPrice, selectedItems } = useMemo(() => {
@@ -85,11 +87,11 @@ export const Checkout: React.FC = () => {
           </div>
           <div className="space-y-1 mb-4 pl-1">
             <div className="flex items-center gap-2 mb-2">
-                <span className="font-bold text-lg text-text-light-primary dark:text-text-dark-primary">김민준</span>
+                <span className="font-bold text-lg text-text-light-primary dark:text-text-dark-primary">{user?.name || '김민준'}</span>
                 <span className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 px-1.5 py-0.5 rounded">기본배송지</span>
             </div>
-            <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">010-1234-5678</p>
-            <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">서울특별시 강남구 테헤란로 123, 45층</p>
+            <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">{user?.phone || '010-1234-5678'}</p>
+            <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">{user?.address || '서울특별시 강남구 테헤란로 123, 45층'}</p>
           </div>
           <div className="relative">
             <select className="w-full appearance-none rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 py-3.5 pl-4 pr-10 text-sm font-medium text-text-light-primary dark:text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">

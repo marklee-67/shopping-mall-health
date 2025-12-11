@@ -18,6 +18,8 @@ import { NotificationSettings } from './pages/NotificationSettings';
 import { AdminLogin } from './pages/AdminLogin';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { HealthTip } from './pages/HealthTip';
+import { Signup } from './pages/Signup';
+import { Login } from './pages/Login';
 
 const App: React.FC = () => {
   return (
@@ -41,6 +43,8 @@ const App: React.FC = () => {
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/health-tip" element={<HealthTip />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </Layout>
     </HashRouter>

@@ -1,8 +1,9 @@
 import React from 'react';
 import { Heart, Star } from 'lucide-react';
 import { Product } from '../types';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 interface ProductCardProps {
   product: Product;
@@ -11,11 +12,18 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, variant = 'grid' }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { cartItems, toggleCart } = useCart();
+  const { isAuthenticated } = useAuth();
 
   const isInCart = cartItems.some(item => item.id === product.id);
 
   const handleClick = () => {
+    if (!isAuthenticated) {
+      alert('회원가입이 필요한 서비스입니다.\n회원가입 페이지로 이동합니다.');
+      navigate('/signup', { state: { from: `/product/${product.id}` } });
+      return;
+    }
     navigate(`/product/${product.id}`);
   };
 

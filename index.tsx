@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { CartProvider } from './context/CartContext';
 import { ProductProvider } from './context/ProductContext';
+import { AuthProvider } from './context/AuthContext';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -12,10 +13,12 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <ProductProvider>
-      <CartProvider>
-        <App />
-      </CartProvider>
-    </ProductProvider>
+    <AuthProvider>
+      <ProductProvider>
+        <CartProvider>
+          <App />
+        </CartProvider>
+      </ProductProvider>
+    </AuthProvider>
   </React.StrictMode>
 );

@@ -3,6 +3,7 @@ import { ArrowLeft, Share2, Heart, ShoppingBag, Calendar, CheckCircle, ArrowRigh
 import { useNavigate, useParams } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useProducts } from '../context/ProductContext';
+import { useAuth } from '../context/AuthContext';
 
 export const ProductDetail: React.FC = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ export const ProductDetail: React.FC = () => {
   const [activeTab, setActiveTab] = useState('detail');
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const { cartItems, addToCart, toggleCart } = useCart();
+  const { isAuthenticated } = useAuth();
 
   const totalCartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const isInCart = cartItems.some(item => item.id === product.id);
@@ -30,6 +32,25 @@ export const ProductDetail: React.FC = () => {
     { q: '보관은 어떻게 하나요?', a: '직사광선을 피해 서늘한 곳에 보관하시고, 개봉 후에는 가급적 빨리 섭취해주세요.' },
   ];
 
+  const handleCartClick = () => {
+    if (!isAuthenticated) {
+      alert('회원가입이 필요한 서비스입니다.\n회원가입 페이지로 이동합니다.');
+      navigate('/signup', { state: { from: '/cart' } });
+      return;
+    }
+    navigate('/cart');
+  };
+
+  const handleBuyNow = () => {
+    if (!isAuthenticated) {
+        alert('회원가입이 필요한 서비스입니다.\n회원가입 페이지로 이동합니다.');
+        navigate('/signup', { state: { from: `/product/${id}` } });
+        return;
+    }
+    addToCart(product);
+    navigate('/cart');
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-background-dark pb-24">
       {/* Header */}
@@ -41,7 +62,7 @@ export const ProductDetail: React.FC = () => {
           <button className="flex h-10 w-10 items-center justify-center text-text-light-primary dark:text-text-dark-primary hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-colors">
             <Share2 size={22} />
           </button>
-          <button onClick={() => navigate('/cart')} className="relative flex h-10 w-10 items-center justify-center -mr-2 text-text-light-primary dark:text-text-dark-primary hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-colors">
+          <button onClick={handleCartClick} className="relative flex h-10 w-10 items-center justify-center -mr-2 text-text-light-primary dark:text-text-dark-primary hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-colors">
             <ShoppingBag size={22} />
             {totalCartCount > 0 && (
               <div className="absolute top-1 right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white shadow-sm ring-1 ring-white dark:ring-background-dark animate-fade-in">
@@ -340,10 +361,7 @@ export const ProductDetail: React.FC = () => {
             <Heart size={24} fill={isInCart ? "currentColor" : "none"} className={isInCart ? "animate-pulse-slow" : ""} />
           </button>
           <button 
-            onClick={() => {
-                addToCart(product);
-                navigate('/cart');
-            }}
+            onClick={handleBuyNow}
             className="flex-1 h-14 flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-primary to-secondary text-base font-bold text-white hover:opacity-90 transition-opacity shadow-lg shadow-primary/20"
           >
             구매하기
